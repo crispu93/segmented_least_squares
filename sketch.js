@@ -3,7 +3,7 @@ let givenPointsX = [], givenPointsY = [],
     samplePointsX = [], samplePointsY = [],
     samplePoints = [], numPoints = 0, countPoints = 0,
     segmentedX = [], segmentedY = [],
-    errors, c = 1;
+    errors, c = 100;
 let randomSize = 50;
 let state = "starting";
 
@@ -98,43 +98,45 @@ function segmentedLeastSquares() {
     }
     for( let i = 0; i<randomSize; ++i) {
         for (let j=0; j<randomSize; ++j) {
-            errors[i][j] = Number.POSITIVE_INFINITY;
+            errors[i][j] = Number.MAX_SAFE_INTEGER;
         }
     }
 
-    for ( let i = 0; i<randomSize; ++i) {
-        for (let j = 0; j<i; ++j) {
+    for ( let i = 0; i<randomSize; i++) {
+        for (let j = 0; j<i; j++) {
             // Variables for calculating errors for each pair of points
             let xSum = 0, ySum = 0, xSSum = 0,  xySum = 0;
-            for (let k = j; k<i; ++k) {
+            for (let k = j; k<i-1; k++) {
                 xSum = xSum + samplePointsX[k];
                 ySum = ySum + samplePointsY[k];
                 xSSum = xSSum + sq(samplePointsX[k]);
                 xySum = xySum + samplePointsX[k]*samplePointsY[k];
             }
-            n = i - j;
-            a = (n*xySum - xSum*ySum)/(n*xSSum - xSum*xSum);
-            b = (ySum - a*xSum)/n;
+            let n = i - j;
+            let a = (n*xySum - xSum*ySum)/(n*xSSum - xSum*xSum);
+            let b = (ySum - a*xSum)/n;
             errors[i][j] = 0;
-            for (let k = j; k<i; ++k) {
-                errors[i][j] = errors[i][j] + sq(samplePointsY[k] - a*samplePointsX[i] - b);
+            for (let k = j; k<i-1; k++) {
+                errors[i][j] = errors[i][j] + sq(samplePointsY[k] - a*samplePointsX[k] - b);
             }
-            //console.log("errors " + i + " " + j + " " + errors[i][j]);
+            console.log("errors " + i + " " + j + " " + errors[i][j] + " " + a + " " + b);
         }
     }
 
     M[0] = 0;
-    for (let j=1; j<=randomSize; ++j) {
+    for (let j=1; j<randomSize; ++j) {
         // Minimum of errors
-        let m = Number.POSITIVE_INFINITY;
+        let m = Number.MAX_SAFE_INTEGER;
         for (let i=0; i<j; i++) {
-            let aux = errors[i][j] + c + M[i-1]; 
-            m = min(m, aux);
+            let aux = errors[j][i] + c + M[i-1]; 
+            if (!isNaN(aux)) {
+                m = min(m, aux);
+            }
+            
         }
         M[j] = m;
         console.log("min " + j + " : " + m);
     }
-    console.log(Number.POSITIVE_INFINITY);
 }
 
 
