@@ -2,7 +2,8 @@ let input, button, sampleButton;
 let givenPointsX = [], givenPointsY = [], 
     samplePointsX = [], samplePointsY = [],
     samplePoints = [], numPoints = 0, countPoints = 0,
-    segmentedX = [], segmentedY = [];
+    segmentedX = [], segmentedY = [],
+    errors, c = 1;
 let randomSize = 50;
 let state = "starting";
 
@@ -22,6 +23,10 @@ function setup() {
     sampleButton = createButton('sample');
     sampleButton.position(input.x, 500);
     sampleButton.mousePressed(sample);
+
+    slsButton = createButton('Segmented Least Squares');
+    slsButton.position(input.x, sampleButton.y + sampleButton.height);
+    slsButton.mousePressed(segmentedLeastSquares);
 
 } 
 
@@ -86,7 +91,50 @@ function sample() {
 }
 
 function segmentedLeastSquares() {
+    errors = new Array(randomSize);
+    let M = [];
+    for(let i = 0; i<randomSize; ++i) {
+        errors[i] = new Array(randomSize);
+    }
+    for( let i = 0; i<randomSize; ++i) {
+        for (let j=0; j<randomSize; ++j) {
+            errors[i][j] = Number.POSITIVE_INFINITY;
+        }
+    }
 
+    for ( let i = 0; i<randomSize; ++i) {
+        for (let j = 0; j<i; ++j) {
+            // Variables for calculating errors for each pair of points
+            let xSum = 0, ySum = 0, xSSum = 0,  xySum = 0;
+            for (let k = j; k<i; ++k) {
+                xSum = xSum + samplePointsX[k];
+                ySum = ySum + samplePointsY[k];
+                xSSum = xSSum + sq(samplePointsX[k]);
+                xySum = xySum + samplePointsX[k]*samplePointsY[k];
+            }
+            n = i - j;
+            a = (n*xySum - xSum*ySum)/(n*xSSum - xSum*xSum);
+            b = (ySum - a*xSum)/n;
+            errors[i][j] = 0;
+            for (let k = j; k<i; ++k) {
+                errors[i][j] = errors[i][j] + sq(samplePointsY[k] - a*samplePointsX[i] - b);
+            }
+            //console.log("errors " + i + " " + j + " " + errors[i][j]);
+        }
+    }
+
+    M[0] = 0;
+    for (let j=1; j<=randomSize; ++j) {
+        // Minimum of errors
+        let m = Number.POSITIVE_INFINITY;
+        for (let i=0; i<j; i++) {
+            let aux = errors[i][j] + c + M[i-1]; 
+            m = min(m, aux);
+        }
+        M[j] = m;
+        console.log("min " + j + " : " + m);
+    }
+    console.log(Number.POSITIVE_INFINITY);
 }
 
 
