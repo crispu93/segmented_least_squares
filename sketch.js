@@ -3,7 +3,7 @@ let givenPointsX = [], givenPointsY = [],
     samplePointsX = [], samplePointsY = [],
     samplePoints = [], numPoints = 0, countPoints = 0,
     segmentedX = [], segmentedY = [],
-    errors, C = 1;
+    errors, C = 0;
 let randomSize = 50;
 let state = "starting";
 
@@ -104,7 +104,7 @@ function segmentedLeastSquares() {
             for (let k = i; k<=j; k++) {
                 xSum = xSum + samplePointsX[k];
                 ySum = ySum + samplePointsY[k];
-                xSSum = xSSum + sq(samplePointsX[k]);
+                xSSum = xSSum + samplePointsX[k]*samplePointsX[k];
                 xySum = xySum + samplePointsX[k]*samplePointsY[k];
             }
             let n = j - i;
@@ -114,23 +114,36 @@ function segmentedLeastSquares() {
             for (let k = i; k<=j; k++) {
                 errors[i][j] = errors[i][j] + sq(samplePointsY[k] - a*samplePointsX[k] - b);
             }
-            //console.log("errors " + i + " " + j + " " + errors[i][j]);
+            console.log("errors " + i + " " + j + " " + errors[i][j]);
         }
     }
 
+    let data = [];
     let M = [];
     M[0] = 0;
     M[1] = errors[0][1] + C;
+    data[0] = 0;
+    data[1] = 0;
     for (let j=2; j<randomSize; j++) {
         // Minimum of errors
         let m = Number.MAX_SAFE_INTEGER;
         for (let i=1; i<j; i++) {
-            let aux = errors[i][j] + C + M[i-1]; 
+            let aux = errors[i][j] + C + M[i-1];
+            
             //console.log("i,j: " + i + "," + j +" Aux: " + aux + " Errors: " + errors[i][j] + " M: " + M[i-1]);
-            m = min(m, aux);
+            if (aux < m) {
+                m = aux;
+                data[j] = i-1
+            }
         }
         M[j] = m;
         console.log("min " + j + " : " + m);
+    }
+
+    let aux = randomSize-1;
+    while(aux > 0) {
+        console.log(aux  +" " );
+        aux = data[aux];
     }
 }
 
