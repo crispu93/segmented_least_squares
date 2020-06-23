@@ -3,7 +3,7 @@ let givenPointsX = [], givenPointsY = [],
     samplePointsX = [], samplePointsY = [],
     samplePoints = [], numPoints = 0, countPoints = 0,
     segmentedX = [], segmentedY = [],
-    errors, C = 2000, solutionX = [], solutionY = [];
+    errors, C = 1500, solutionX = [], solutionY = [];
 let randomSize = 50;
 let state = "starting";
 
