@@ -53,7 +53,7 @@ function setRandomSize() {
 function draw() { 
     background(220);
     for (let i = 1; i<givenPointsX.length; i++) {
-        stroke('purple');
+        stroke('rgba(0,0,0,0.4)');
         strokeWeight(10);
         point(givenPointsX[i],givenPointsY[i]);
         if(i<givenPointsX.length-1 && givenPointsX.length > 1) {
@@ -70,8 +70,8 @@ function draw() {
     }
 
     for ( let i = 0; i<solutionX.length-1; i++) {
-        stroke('rgba(0,255,0,0.4)');
-        strokeWeight(7);
+        stroke('rgba(138,43,43,0.8)');
+        strokeWeight(5);
         line(solutionX[i], solutionY[i], solutionX[i+1], solutionY[i+1]);
     }
 }
